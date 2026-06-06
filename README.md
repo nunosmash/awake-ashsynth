@@ -218,10 +218,10 @@ awake-ashsynth/
     └── beatclock-crow.lua  # clock
 
 ashsynth/
-├── ashsynth.lua     # main script
+├── ashsynth.lua            # main script
 └── lib/
     ├── ash_engine.lua      # Ash params & engine bridge
-    └── Engine_Ash.sc  # engine
+    └── Engine_Ash.sc       # engine
 ```
 
 Presets are saved locally on norns under `dust/data/awake-ashsynth/` (not included in this repo).
