@@ -39,7 +39,6 @@ A bottom value of `0` is not a rest — it means **offset 0**. If the top layer 
 ```
 norns/dust/code/awake-ashsynth/   ← this script
 norns/dust/code/ashsynth/         ← Ash engine (required)
-norns/dust/data/awake-ashsynth/   ← presets & pmap
 ```
 
 ---
@@ -48,7 +47,6 @@ norns/dust/data/awake-ashsynth/   ← presets & pmap
 
 - **Engine**: `engine.name = "Ash"` — same as ashsynth
 - **Parameters**: `lib/ash_engine.lua` — same Ash parameter set as ashsynth
-- **MIDI CC map**: `data/awake-ashsynth/awake-ashsynth.pmap` — same as ashsynth pmap (ch 5)
 - **Differences from ashsynth**
   - No awake halfsecond (softcut) delay loop — direct engine output
   - `noteOff` → `noteOn` each step to retrigger ADSR (sequencer behavior)
@@ -114,103 +112,88 @@ Shortcuts: **cutoff**, **reso**, **drive**, **reverb**, **delay**, **fdbk**
 
 On an 8-row grid, use K2 to switch between one / two.
 
-### TIE (legato)
-
-**K1 + press step (column)** → toggle TIE on that step (only if a note exists)
-
-| Display | Meaning |
-|---------|---------|
-| **Grid** | That step's **column** fills dimly; the **note cell stays off** |
-| **norns screen** | A dim **vertical line** at that step; the note bar stays dark |
-| **During playback** | Current step is highlighted brightly |
-
-A tied step **legs into the next step** (`noteOff` is skipped).
-
-- **Top TIE**: melody continues into the next step
-- **Bottom TIE**: offset change continues into the next step (legato works even if bottom goes to `0`)
-- Sound only plays when the **top layer has a note**
-
-Deleting a note / alt+K2 clear / random also clears TIE.
-
 ---
 
-## Glide
+## TIE (legato)
 
-Uses the Ash engine glide, synced with the sequencer. Adjust via params, SOUND mode, or MIDI CC.
+Awake retriggers every step (`noteOff` → `noteOn`), so every note is the same length and **legato glide does not work on its own**.  
+**TIE** connects one step into the next: the gate stays open, the envelope is not retriggered, and glide can slide pitch across steps.
+
+**Default Glide Mode is Legato** — glide applies on TIE-connected steps. Raise the **glide** amount in params or SOUND mode.
+
+### How to toggle
+
+1. Hold **K1** (alt)
+2. Press a **step column** on the grid (the step must already have a note)
+3. Press again to turn TIE off
+
+Works on **top** or **bottom** layer. On a 16-row grid, use the upper half for top TIE and the lower half for bottom TIE.
+
+### What TIE does
+
+A TIE on step **N** means: *when the sequencer reaches step N+1, do not cut the note first*.
+
+| Layer | Effect |
+|-------|--------|
+| **Top TIE** | Melody degree carries into the next step |
+| **Bottom TIE** | Pitch offset carries into the next step (works even if bottom goes to `0`) |
+
+Either layer can trigger legato. Sound still only plays when the **top layer has a note**.
+
+### Visual feedback
+
+| Display | Normal note | TIE step |
+|---------|-------------|----------|
+| **Grid** | Bright cell at note position | Entire **column** dim; **note cell off** |
+| **norns screen** | Horizontal note bar | Dim **vertical line**; note bar dark |
+| **Playback** | — | Current step highlighted on top of TIE display |
+
+### Glide
 
 | Glide Mode | Behavior |
 |------------|----------|
 | **All** | Glide on every step |
-| **Legato** | Glide only on TIE-connected steps |
+| **Legato** *(default)* | Glide only on TIE-connected steps |
 
-Without TIE, each step sends `noteOff` → `noteOn`, so every note is the same length.  
-For **legato glide**, use TIE + **Glide Mode: Legato** + raise the glide amount.
+Without TIE, each step is a fresh attack. With TIE + Legato + glide, pitch slides into the next step.
 
-### Example
+### Examples
+
+**Bottom layer glide** (common case — top holds, bottom moves):
 
 ```
-Top (one):    ● ● ● ●   (same note, no TIE)
-Bottom (two): 2 → 5     (TIE ON at step 2)
+Top (one):    3   3   3   3
+Bottom (two): 2   5   7   0
+TIE:              ●       (TIE on step 2 → legs into step 3)
 
-→ pitch glides from one+2 to one+5
+→ pitch glides from scale[3+5] to scale[3+7]
 ```
+
+**Top layer glide**:
+
+```
+Top (one):    2   5   7   4
+TIE:          ●   ●
+Bottom (two): 0   0   0   0
+
+→ melody glides across tied top steps
+```
+
+### TIE is cleared when
+
+- The note on that step is deleted
+- **K2 + alt** clear pattern
+- **K3 + alt** random
+
+TIE state is saved with norns params / presets on your device.
 
 ---
 
-## MIDI
+## MIDI output
 
-### Output
+params **output**: audio / midi / audio + midi / crow, etc.
 
-params **output**: audio / midi / audio+midi / crow, etc.
-
-### CC (built-in)
-
-| CC | Parameter |
-|----|-----------|
-| 1 | lp_env_amount |
-| 7 | drive |
-| 71 | lp_resonance |
-| 74 | lp_cutoff |
-
-Additional CC mapping via `cc_num_1`–`cc_num_4` and `cc_assign_1`–`cc_assign_4`.
-
-### pmap (ch 5)
-
-| CC | Parameter |
-|----|-----------|
-| 30 | lp_cutoff |
-| 31 | filter_attack |
-| 32 | lp_resonance |
-| 33 | filter_sustain |
-| 34 | drive |
-| 35 | filter_decay |
-| 36 | lfo_master |
-| 37 | filter_release |
-| 38 | fm_amount |
-| 39 | glide |
-| 40 | lp_env_amount |
-
-File: `data/awake-ashsynth/awake-ashsynth.pmap`
-
----
-
-## Presets
-
-Load with MIDI **Program Change (PC 0–15)**.
-
-```
-data/awake-ashsynth/awake-ashsynth-01.pset
-data/awake-ashsynth/awake-ashsynth-02.pset
-...
-```
-
-Presets include:
-
-- one / two pattern data (`one_data_*`, `two_data_*`)
-- TIE state (`one_tie_*`, `two_tie_*`)
-- Loop lengths, BPM, scale, Ash engine parameters
-
-Older presets saved without TIE load with all ties off.
+MIDI Program Change (PC 0–15) can recall saved presets on your norns (`dust/data/awake-ashsynth/`).
 
 ---
 
@@ -235,11 +218,9 @@ awake-ashsynth/
 └── lib/
     ├── ash_engine.lua      # Ash params & engine bridge
     └── beatclock-crow.lua  # clock
-
-data/awake-ashsynth/
-├── awake-ashsynth.pmap
-└── awake-ashsynth-XX.pset
 ```
+
+Presets are saved locally on norns under `dust/data/awake-ashsynth/` (not included in this repo).
 
 ---
 
