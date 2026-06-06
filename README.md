@@ -57,8 +57,7 @@ norns/dust/code/ashsynth/         ← Ash engine (required)
 
 ## Controls
 
-**E1** cycles modes: `STEP` → `LOOP` → `SOUND` → `OPTION`  
-**K1** hold = **alt**
+**E1** cycles modes: `STEP` → `LOOP` → `SOUND` → `OPTION`
 
 ### STEP
 
@@ -67,10 +66,10 @@ norns/dust/code/ashsynth/         ← Ash engine (required)
 | E2 | Move edit position |
 | E3 | Change note value (current channel: one / two) |
 | K2 | Switch one ↔ two channel |
-| K2 + alt | Clear entire pattern (including TIE) |
+| K2 + K1 hold | Clear entire pattern (including TIE) |
 | K3 | Morph (current channel) |
-| K3 + alt | Random (resets TIE) |
-| E2 + alt | Probability |
+| K3 + K1 hold | Random (resets TIE) |
+| K1 hold + E2 | Probability |
 
 ### LOOP
 
@@ -79,7 +78,7 @@ norns/dust/code/ashsynth/         ← Ash engine (required)
 | E2 | Top loop length |
 | E3 | Bottom loop length |
 | K2 | Reset playhead |
-| K2 + alt | Reset clock |
+| K2 + K1 hold | Reset clock |
 | K3 | Random jump |
 
 ### SOUND
@@ -97,8 +96,8 @@ Shortcuts: **cutoff**, **reso**, **drive**, **reverb**, **delay**, **fdbk**
 |-------|--------|
 | E2 | BPM |
 | E3 | Root note |
-| E2 + alt | Step length |
-| E3 + alt | Scale |
+| K1 hold + E2 | Step length |
+| K1 hold + E3 | Scale |
 
 ---
 
@@ -123,7 +122,7 @@ Awake retriggers every step (`noteOff` → `noteOn`), so every note is the same 
 
 ### How to toggle
 
-1. Hold **K1** (alt)
+1. Hold **K1**
 2. Press a **step column** on the grid (the step must already have a note)
 3. Press again to turn TIE off
 
@@ -182,8 +181,8 @@ Bottom (two): 0   0   0   0
 ### TIE is cleared when
 
 - The note on that step is deleted
-- **K2 + alt** clear pattern
-- **K3 + alt** random
+- **K2 + K1 hold** clear pattern
+- **K3 + K1 hold** random
 
 TIE state is saved with norns params / presets on your device.
 
